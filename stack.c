@@ -1,10 +1,8 @@
 #include "stack.h"
 #include <stdlib.h>
 
-Stack create_stack() {
-    Stack s;
-    s.top = NULL;
-    return s;
+void init_stack(Stack* s) {
+        s->top = NULL;
 }
 
 void free_stack(Stack* s) {

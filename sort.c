@@ -1,8 +1,8 @@
-
-#include "sort_stack.h"
-
+#include "sort.h"
+#include "stack.h"
 void sort_stack(Stack* s) {
-    Stack temp = create_stack(s->capacity);
+    Stack temp;
+    init_stack(&temp);
 
     while (!is_empty(s)) {
         int x = pop(s);

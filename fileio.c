@@ -1,8 +1,9 @@
 #include "fileio.h"
 #include <stdio.h>
-
+#include "stack.h"
 static void write_stack_in_input_order(FILE* f, Stack* s) {
-    Stack tmp = create_stack(s->capacity);
+    Stack tmp;
+    init_stack(&tmp);
 
     while (!is_empty(s)) push(&tmp, pop(s));
 
