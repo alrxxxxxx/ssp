@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "stack.h"
-#include "sort_stack.h"
+#include "sort.h"
 #include "fileio.h"
 
 static Stack copy_stack(Stack* src) {
