@@ -1,12 +1,17 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <time.h>
+
 #include "stack.h"
 #include "sort.h"
+#include "merge_sort.h"
 #include "fileio.h"
 
 static Stack copy_stack(Stack* src) {
     Stack tmp;
     Stack dst;
+
     init_stack(&tmp);
     init_stack(&dst);
 
@@ -23,41 +28,33 @@ static Stack copy_stack(Stack* src) {
     return dst;
 }
 
-int main(int argc, char *argv[]) {
+int main() {
+    Stack orig;
+    init_stack(&orig);
 
-    if (argc == 3 && strcmp(argv[1], "--file") == 0) {
-        if (!print_from_file(argv[2])) { 
-            printf("Cannot read file.\n");
-        }
-        return 0;
+    int x;
+    while (scanf("%d", &x) == 1) {
+        push(&orig, x);
     }
 
-    while (1) {
-        printf("enter numbers separated by space (end with 0):\n");
+    printf("Size read = %d\n", size(&orig));
 
-        Stack orig;
-        init_stack(&orig);
+    Stack sorted1 = copy_stack(&orig);
+    Stack sorted2 = copy_stack(&orig);
 
-        int x;
-        while (scanf("%d", &x) == 1 && x != 0) {
-            push(&orig, x);
-        }
+    clock_t start1 = clock();
+    sort_stack(&sorted1);
+    clock_t end1 = clock();
 
-        Stack sorted = copy_stack(&orig);
-        sort_stack(&sorted);
+    clock_t start2 = clock();
+    merge_sort_stack(&sorted2);
+    clock_t end2 = clock();
 
-        if (!save_two_stacks("output.txt", &orig, &sorted)) {
-            printf("Cannot write file.\n");
-        } else {
-            printf("Saved to output.txt\n");
-        }
+    double time1 = (double)(end1 - start1) / CLOCKS_PER_SEC;
+    double time2 = (double)(end2 - start2) / CLOCKS_PER_SEC;
 
-        int choice;
-        printf("Do you want to repeat? (1-yes, 0-no): ");
-        scanf("%d", &choice);
-
-        if (choice == 0) break;
-    }
+    printf("Insertion sort time: %f seconds\n", time1);
+    printf("Merge sort time: %f seconds\n", time2);
 
     return 0;
 }
