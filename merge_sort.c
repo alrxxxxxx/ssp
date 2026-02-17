@@ -1,55 +1,64 @@
 #include <stdlib.h>
 #include "merge_sort.h"
 
-static Node* merge(Node* a, Node* b) {
-    if (!a) return b;
-    if (!b) return a;
+static void merge_stacks(Stack *s1, Stack *s2, Stack *dest) {
+    Stack temp;
+    init_stack(&temp);
 
-    Node* result = NULL;
+    while (!is_empty(s1) && !is_empty(s2)) {
+        int v1 = peek(s1);
+        int v2 = peek(s2);
 
-    if (a->data <= b->data) {
-        result = a;
-        result->next = merge(a->next, b);
-    } else {
-        result = b;
-        result->next = merge(a, b->next);
-    }
-
-    return result;
-}
-
-static void split(Node* source, Node** front, Node** back) {
-    Node* slow = source;
-    Node* fast = source->next;
-
-    while (fast) {
-        fast = fast->next;
-        if (fast) {
-            slow = slow->next;
-            fast = fast->next;
+        if (v1 <= v2) {              
+            push(&temp, pop(s1));
+        } else {
+            push(&temp, pop(s2));
         }
     }
 
-    *front = source;
-    *back = slow->next;
-    slow->next = NULL;
+    while (!is_empty(s1)) {
+        push(&temp, pop(s1));
+    }
+
+    while (!is_empty(s2)) {
+        push(&temp, pop(s2));
+    }
+    while (!is_empty(&temp)) {
+        push(dest, pop(&temp));
+    }
+
+    free_stack(&temp);
 }
 
-static void merge_sort(Node** headRef) {
-    Node* head = *headRef;
-    if (!head || !head->next) return;
+static void sort_recursive(Stack *s, int n) {
+    if (n <= 1) return;
 
-    Node* a;
-    Node* b;
+    Stack left, right;
+    init_stack(&left);
+    init_stack(&right);
 
-    split(head, &a, &b);
+    int half = n / 2;
 
-    merge_sort(&a);
-    merge_sort(&b);
+    for (int i = 0; i < half; i++) {
+        push(&left, pop(s));
+    }
 
-    *headRef = merge(a, b);
+    while (!is_empty(s)) {
+        push(&right, pop(s));
+    }
+
+    sort_recursive(&left, half);
+    sort_recursive(&right, n - half);
+
+    merge_stacks(&left, &right, s);
+
+    free_stack(&left);
+    free_stack(&right);
 }
 
 void merge_sort_stack(Stack *s) {
-    merge_sort(&s->top);
+    if (s == NULL) return;
+
+    int n = size(s);
+    sort_recursive(s, n);
 }
